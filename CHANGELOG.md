@@ -1,44 +1,52 @@
 # Changelog
 
-## [Unreleased](https://github.com/OpenVoiceOS/ovos-vlc-plugin/tree/HEAD)
+## [Unreleased](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/HEAD)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-vlc-plugin/compare/V0.0.2a3...HEAD)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/V0.0.2a4...HEAD)
 
 **Implemented enhancements:**
 
-- feat/native\_ocp [\#3](https://github.com/OpenVoiceOS/ovos-vlc-plugin/pull/3) ([NeonJarbas](https://github.com/NeonJarbas))
+- OCP refactor [\#6](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/6) ([NeonJarbas](https://github.com/NeonJarbas))
+
+## [V0.0.2a4](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/V0.0.2a4) (2023-09-06)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/V0.0.2a3...V0.0.2a4)
+
+**Implemented enhancements:**
+
+- feat/native\_ocp [\#3](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/3) ([NeonJarbas](https://github.com/NeonJarbas))
 
 **Closed issues:**
 
-- Doesn't handle youtube// URIs [\#5](https://github.com/OpenVoiceOS/ovos-vlc-plugin/issues/5)
+- Doesn't handle youtube// URIs [\#5](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/issues/5)
 
-## [V0.0.2a3](https://github.com/OpenVoiceOS/ovos-vlc-plugin/tree/V0.0.2a3) (2023-06-18)
+## [V0.0.2a3](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/V0.0.2a3) (2023-06-18)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-vlc-plugin/compare/V0.0.2a2...V0.0.2a3)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/V0.0.2a2...V0.0.2a3)
 
 **Merged pull requests:**
 
-- unmycroftify [\#4](https://github.com/OpenVoiceOS/ovos-vlc-plugin/pull/4) ([JarbasAl](https://github.com/JarbasAl))
+- unmycroftify [\#4](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/4) ([JarbasAl](https://github.com/JarbasAl))
 
-## [V0.0.2a2](https://github.com/OpenVoiceOS/ovos-vlc-plugin/tree/V0.0.2a2) (2022-08-05)
+## [V0.0.2a2](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/V0.0.2a2) (2022-08-05)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-vlc-plugin/compare/V0.0.2a1...V0.0.2a2)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/V0.0.2a1...V0.0.2a2)
 
 **Implemented enhancements:**
 
-- Feat/plugin configs [\#2](https://github.com/OpenVoiceOS/ovos-vlc-plugin/pull/2) ([NeonJarbas](https://github.com/NeonJarbas))
+- Feat/plugin configs [\#2](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/2) ([NeonJarbas](https://github.com/NeonJarbas))
 
-## [V0.0.2a1](https://github.com/OpenVoiceOS/ovos-vlc-plugin/tree/V0.0.2a1) (2022-06-09)
+## [V0.0.2a1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/V0.0.2a1) (2022-06-09)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-vlc-plugin/compare/V0.0.1...V0.0.2a1)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/V0.0.1...V0.0.2a1)
 
-## [V0.0.1](https://github.com/OpenVoiceOS/ovos-vlc-plugin/tree/V0.0.1) (2022-02-25)
+## [V0.0.1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/V0.0.1) (2022-02-25)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-vlc-plugin/compare/a3120b5e4fac416205f9c2dc6fd6131a5424f9ad...V0.0.1)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/a3120b5e4fac416205f9c2dc6fd6131a5424f9ad...V0.0.1)
 
 **Merged pull requests:**
 
-- feat/workflows [\#1](https://github.com/OpenVoiceOS/ovos-vlc-plugin/pull/1) ([JarbasAl](https://github.com/JarbasAl))
+- feat/workflows [\#1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/1) ([JarbasAl](https://github.com/JarbasAl))
 
 
 
