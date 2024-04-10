@@ -9,7 +9,7 @@ BASEDIR = os.path.abspath(os.path.dirname(__file__))
 def get_version():
     """ Find the version of the package"""
     version = None
-    version_file = os.path.join(BASEDIR, 'ovos_plugin_vlc', 'version.py')
+    version_file = os.path.join(BASEDIR, 'ovos_media_plugin_vlc', 'version.py')
     major, minor, build, alpha = (None, None, None, None)
     with open(version_file) as f:
         for line in f:
@@ -50,8 +50,8 @@ def required(requirements_file):
                 if pkg.strip() and not pkg.startswith("#")]
 
 
-PLUGIN_ENTRY_POINT = 'ovos-media-audio-plugin-vlc=ovos_plugin_vlc:VLCOCPAudioService'
-VIDEO_ENTRY_POINT = 'ovos-media-video-plugin-vlc=ovos_plugin_vlc:VLCOCPVideoService'
+PLUGIN_ENTRY_POINT = 'ovos-media-audio-plugin-vlc=ovos_media_plugin_vlc:VLCOCPAudioService'
+VIDEO_ENTRY_POINT = 'ovos-media-video-plugin-vlc=ovos_media_plugin_vlc:VLCOCPVideoService'
 
 setup(
     name='ovos-media-plugin-vlc',
@@ -61,9 +61,9 @@ setup(
     author='JarbasAi',
     author_email='jarbasai@mailfence.com',
     license='Apache-2.0',
-    packages=['ovos_plugin_vlc'],
+    packages=['ovos_media_plugin_vlc'],
     install_requires=required("requirements/requirements.txt"),
-    package_data={'': package_files('ovos_plugin_vlc')},
+    package_data={'': package_files('ovos_media_plugin_vlc')},
     keywords='ovos audio video OCP plugin',
     entry_points={'opm.media.audio': PLUGIN_ENTRY_POINT,
                   'opm.media.video': VIDEO_ENTRY_POINT}
