@@ -1,0 +1,42 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "ovos-media-plugin-vlc"
+dynamic = ["version"]
+description = "vlc plugin for ovos"
+readme = "README.md"
+license = "Apache-2.0"
+authors = [
+    { name = "JarbasAi", email = "jarbasai@mailfence.com" },
+]
+keywords = ["ovos", "audio", "video", "OCP", "plugin"]
+dependencies = [
+    "ovos-plugin-manager>=0.0.26a5",
+    "python-vlc>=1.1.2",
+]
+
+[project.optional-dependencies]
+test = [
+    "pytest",
+]
+
+[project.urls]
+Homepage = "https://github.com/OpenVoiceOS/ovos-media-plugin-vlc"
+
+[project.entry-points."opm.media.audio"]
+ovos-media-audio-plugin-vlc = "ovos_media_plugin_vlc:VLCOCPAudioService"
+
+[project.entry-points."opm.media.video"]
+ovos-media-video-plugin-vlc = "ovos_media_plugin_vlc:VLCOCPVideoService"
+
+[tool.setuptools.dynamic]
+version = { attr = "ovos_media_plugin_vlc.version.__version__" }
+
+[tool.setuptools.packages.find]
+where = ["."]
+include = ["ovos_media_plugin_vlc*"]
+
+[tool.setuptools.package-data]
+"*" = ["*.json", "*.voc", "*.intent", "*.dialog"]
