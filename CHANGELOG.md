@@ -1,8 +1,16 @@
 # Changelog
 
-## [Unreleased](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/HEAD)
+## [0.1.0a5](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.1.0a5) (2026-06-17)
 
-[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/a3120b5e4fac416205f9c2dc6fd6131a5424f9ad...HEAD)
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/V0.1.0a4...0.1.0a5)
+
+**Merged pull requests:**
+
+- chore: add missing shared CI workflows [\#2](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/2) ([JarbasAl](https://github.com/JarbasAl))
+
+## [V0.1.0a4](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/V0.1.0a4) (2024-04-10)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/a3120b5e4fac416205f9c2dc6fd6131a5424f9ad...V0.1.0a4)
 
 **Fixed bugs:**
 
