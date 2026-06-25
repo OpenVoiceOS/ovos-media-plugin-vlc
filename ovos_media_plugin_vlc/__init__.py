@@ -10,6 +10,16 @@ from ovos_utils.log import LOG
 class VlcBaseService(MediaBackend):
     def __init__(self, config, bus=None, video=False):
         super().__init__(config, bus)
+        self._init_vlc(config, bus, video=video)
+
+    def _init_vlc(self, config, bus=None, video=False):
+        """Set up the libvlc engine + event handlers.
+
+        Factored out of ``__init__`` so it can be shared by both the new
+        ``MediaBackend`` (ovos-media) backends and the legacy ``AudioBackend``
+        (ovos-audio) adapter, which have different base-class constructors but
+        drive the same VLC engine underneath.
+        """
         if video:
             self.instance = vlc.Instance("")
         else:
