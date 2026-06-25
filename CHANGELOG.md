@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0a2](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.2.0a2) (2026-06-25)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.2.0a1...0.2.0a2)
+
+**Merged pull requests:**
+
+- test: end-to-end test via ovoscope OCPPlayerHarness [\#4](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/4) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.2.0a1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.2.0a1) (2026-06-25)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.1.0a5...0.2.0a1)
