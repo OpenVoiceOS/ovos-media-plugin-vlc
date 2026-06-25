@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.0a1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.2.0a1) (2026-06-25)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.1.0a5...0.2.0a1)
+
+**Merged pull requests:**
+
+- feat: dual-target — add legacy ovos-audio service entry point [\#3](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/3) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.1.0a5](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.1.0a5) (2026-06-17)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/V0.1.0a4...0.1.0a5)
