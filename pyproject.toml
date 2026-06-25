@@ -31,6 +31,10 @@ ovos-media-audio-plugin-vlc = "ovos_media_plugin_vlc:VLCOCPAudioService"
 [project.entry-points."opm.media.video"]
 ovos-media-video-plugin-vlc = "ovos_media_plugin_vlc:VLCOCPVideoService"
 
+# legacy ovos-audio service backend (so the plugin works on both stacks)
+[project.entry-points."mycroft.plugin.audioservice"]
+ovos_vlc = "ovos_media_plugin_vlc.audio"
+
 [tool.setuptools.dynamic]
 version = { attr = "ovos_media_plugin_vlc.version.__version__" }
 
