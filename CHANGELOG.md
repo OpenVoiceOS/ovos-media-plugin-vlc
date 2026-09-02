@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.1a1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.2.1a1) (2026-09-02)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.2.0a2...0.2.1a1)
+
+**Merged pull requests:**
+
+- fix: report natural track end and honour the stop contract [\#5](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/5) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.2.0a2](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.2.0a2) (2026-06-25)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.2.0a1...0.2.0a2)
