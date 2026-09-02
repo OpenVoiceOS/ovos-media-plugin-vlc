@@ -75,9 +75,14 @@ class VlcBaseService(MediaBackend):
 
     def queue_ended(self, data, other):
         LOG.debug('VLC playback ended')
-        self._now_playing = None
         if self._track_start_callback:
             self._track_start_callback(None)
+        # natural end-of-media (vlc reached end on its own, no stop()
+        # requested by us) - ocp_stop() is idempotent (no-ops once
+        # self._now_playing is None), so it is safe to call here even
+        # when stop() already triggered it; this is the only path that
+        # reports a *natural* end-of-media upward
+        self.ocp_stop()
 
     def supported_uris(self):
         return ['file', 'http', 'https']
