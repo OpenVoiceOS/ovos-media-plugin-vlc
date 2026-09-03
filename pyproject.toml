@@ -13,7 +13,11 @@ authors = [
 ]
 keywords = ["ovos", "audio", "video", "OCP", "plugin"]
 dependencies = [
-    "ovos-plugin-manager>=2.1.0,<3.0.0",
+    # floor kept resolvable against both the released v1 templates and the
+    # unreleased media-backend-v2 template this plugin targets; bump to
+    # ">=3.0.0a1,<4.0.0" once ovos-plugin-manager 3.0.0a1 releases (this PR
+    # merges only after that release).
+    "ovos-plugin-manager>=2.11.6a1,<4.0.0",
     "python-vlc>=1.1.2",
 ]
 
