@@ -12,4 +12,9 @@ jobs:
     with:
       python_versions: '["3.10", "3.11", "3.12", "3.13", "3.14"]'
       install_extras: 'test'
+      # TEMPORARY until ovos-plugin-manager 3.0.0a1 releases: this plugin
+      # targets the unreleased media-backend-v2 template, so pull it in
+      # ahead of the built wheel's own (still v1-floored) dependency so CI
+      # exercises the contract this PR actually implements.
+      pre_install_pip: 'git+https://github.com/OpenVoiceOS/ovos-plugin-manager@feat/media-backend-v2'
       test_path: 'test'
