@@ -26,6 +26,14 @@ class VLCAudioService(VlcBaseService, AudioBackend):
 
     def __init__(self, config, bus=None, name='vlc'):
         AudioBackend.__init__(self, config, bus, name)
+        # AudioBackend.__init__ (legacy v1 template) never runs
+        # MediaBackend.__init__, so the report()/report_track_end()
+        # bookkeeping those methods rely on (_event_reporter,
+        # _stop_requested) would otherwise never get initialized on this
+        # adapter - set it up explicitly since we still drive the shared
+        # v2 VlcBaseService engine underneath.
+        self._event_reporter = None
+        self._stop_requested = False
         # set up the VLC engine without the new MediaBackend constructor
         self._init_vlc(config, bus, video=False)
 
