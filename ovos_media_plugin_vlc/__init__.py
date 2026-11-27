@@ -1,13 +1,14 @@
-import time
-
 import vlc
-from ovos_bus_client.message import Message
 
-from ovos_plugin_manager.templates.media import MediaBackend, AudioPlayerBackend, VideoPlayerBackend
+from ovos_plugin_manager.templates.media import (
+    MediaBackend, AudioPlayerBackend, VideoPlayerBackend, PlaybackEvent)
 from ovos_utils.log import LOG
 
 
 class VlcBaseService(MediaBackend):
+    can_seek = True
+    can_pause = True
+
     def __init__(self, config, bus=None, video=False):
         super().__init__(config, bus)
         self._init_vlc(config, bus, video=video)
@@ -30,73 +31,59 @@ class VlcBaseService(MediaBackend):
 
         self.vlc_events.event_attach(vlc.EventType.MediaPlayerPlaying,
                                      self.track_start, 1)
-        self.vlc_events.event_attach(vlc.EventType.MediaPlayerTimeChanged,
-                                     self.update_playback_time, None)
         self.vlc_events.event_attach(vlc.EventType.MediaPlayerEndReached,
-                                     self.queue_ended, 0)
+                                     self.track_ended, None)
         self.vlc_events.event_attach(vlc.EventType.MediaPlayerEncounteredError,
-                                     self.handle_vlc_error, None)
+                                     self.track_error, None)
+        self.vlc_events.event_attach(vlc.EventType.MediaPlayerStopped,
+                                     self.track_stopped, None)
 
         self.config = config
         self.bus = bus
         self.low_volume = self.config.get('low_volume', 30)
-        self._playback_time = 0
+        self._loaded_uri = None
         self.player.audio_set_volume(100)
-        self._last_sync = 0
         if video and self.config.get("fullscreen", True):
             self.player.toggle_fullscreen()
 
     # vlc internals
-    @property
-    def playback_time(self):
-        """ in milliseconds """
-        return self._playback_time
-
-    def handle_vlc_error(self, data, other):
-        self.ocp_error()
-
-    def update_playback_time(self, data, other):
-        self._playback_time = data.u.new_time
-        # this message is captured by ovos common play and used to sync the
-        # seekbar
-        if time.time() - self._last_sync > 2:
-            # send event ~ every 2 s
-            # the gui seems to lag a lot when sending messages too often,
-            # gui expected to keep an internal fake progress bar and sync periodically
-            self._last_sync = time.time()
-            self.bus.emit(Message("ovos.common_play.playback_time",
-                                  {"position": self._playback_time,
-                                   "length": self.get_track_length()}))
-
     def track_start(self, data, other):
         LOG.debug('VLC playback start')
-        if self._track_start_callback:
-            self._track_start_callback(self.track_info().get('name', "track"))
+        self.report(PlaybackEvent.TRACK_START, uri=self._loaded_uri)
 
-    def queue_ended(self, data, other):
+    def track_ended(self, data, other):
         LOG.debug('VLC playback ended')
-        if self._track_start_callback:
-            self._track_start_callback(None)
-        # natural end-of-media (vlc reached end on its own, no stop()
-        # requested by us) - ocp_stop() is idempotent (no-ops once
-        # self._now_playing is None), so it is safe to call here even
-        # when stop() already triggered it; this is the only path that
-        # reports a *natural* end-of-media upward
-        self.ocp_stop()
+        self.report_track_end(uri=self._loaded_uri)
+
+    def track_error(self, data, other):
+        self.report_track_end(uri=self._loaded_uri,
+                              error="libvlc reported a playback error")
+
+    def track_stopped(self, data, other):
+        """libvlc 3.0 also sends Stopped when the input thread dies after
+        an end or an error (lib/media_player.c, INPUT_EVENT_DEAD). That end
+        is already reported, so only a requested stop is reported here."""
+        if self._stop_requested:
+            self.report_track_end(uri=self._loaded_uri)
 
     def supported_uris(self):
         return ['file', 'http', 'https']
 
     # audio service
-    def play(self, repeat=False):
-        """ Play playlist using vlc. """
-        LOG.debug('VLCService Play')
-        track = self.instance.media_new(self._now_playing)
-        track.get_mrl()
+    def load_track(self, uri: str, metadata: dict = None) -> bool:
+        """ Load track using vlc. """
+        LOG.debug('VLCService Load')
+        track = self.instance.media_new(uri)
         self.player.set_media(track)
+        self._loaded_uri = uri
+        return True
+
+    def play(self):
+        """ Play the loaded track using vlc. """
+        LOG.debug('VLCService Play')
         self.player.play()
 
-    def stop(self):
+    def _stop(self):
         """ Stop vlc playback. """
         LOG.info('VLCService Stop')
         if self.player.is_playing():
@@ -169,33 +156,6 @@ class VlcBaseService(MediaBackend):
                 milliseconds (int): number of milliseconds of final position
         """
         self.player.set_time(int(milliseconds))
-
-    def seek_forward(self, seconds=1):
-        """
-        skip X seconds
-
-          Args:
-                seconds (int): number of seconds to seek, if negative rewind
-        """
-        seconds = seconds * 1000
-        new_time = self.player.get_time() + seconds
-        duration = self.player.get_length()
-        if new_time > duration:
-            new_time = duration
-        self.player.set_time(new_time)
-
-    def seek_backward(self, seconds=1):
-        """
-        rewind X seconds
-
-          Args:
-                seconds (int): number of seconds to seek, if negative rewind
-        """
-        seconds = seconds * 1000
-        new_time = self.player.get_time() - seconds
-        if new_time < 0:
-            new_time = 0
-        self.player.set_time(new_time)
 
     def lower_volume(self):
         """Lower volume.
