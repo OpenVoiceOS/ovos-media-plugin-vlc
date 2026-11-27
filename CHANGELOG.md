@@ -1,5 +1,13 @@
 # Changelog
 
+## [1.0.0a1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/1.0.0a1) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.2.2a1...1.0.0a1)
+
+**Breaking changes:**
+
+- feat!: port to MediaBackend v2 — report events, no bus state emission [\#6](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/6) ([JarbasAl](https://github.com/JarbasAl))
+
 ## [0.2.2a1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.2.2a1) (2026-11-27)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.2.1a1...0.2.2a1)
