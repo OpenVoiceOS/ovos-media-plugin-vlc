@@ -77,7 +77,7 @@ class TestV2EventReporting(unittest.TestCase):
     def test_vlc_error_reports_error_and_uri(self):
         svc, events = self._service()
         svc.load_track(URI)
-        svc.media_state_changed(_state(_vlc.State.Error), URI)
+        svc.track_error(None, None)
         self.assertEqual(len(events), 1)
         event, data = events[0]
         self.assertEqual(event, PlaybackEvent.ERROR)
@@ -86,14 +86,14 @@ class TestV2EventReporting(unittest.TestCase):
         self.assertTrue(data["error"])
 
     def test_explicit_stop_then_vlc_stopped_event_reports_stopped(self):
-        """stop() records the request; the asynchronous Stopped state of
-        the media reports it."""
+        """stop() records the request; the Stopped event of the
+        player reports it."""
         svc, events = self._service()
         svc.load_track(URI)
         svc.stop()
         self.assertEqual(events, [], "stop() itself must not report - only "
                                       "the vlc end-of-track callback does")
-        svc.media_state_changed(_state(_vlc.State.Stopped), URI)
+        svc.track_stopped(None, None)
         self.assertIn((PlaybackEvent.STOPPED, {"uri": URI}), events)
 
     def test_natural_end_after_stop_flag_is_not_sticky(self):
@@ -103,11 +103,11 @@ class TestV2EventReporting(unittest.TestCase):
         svc, events = self._service()
         svc.load_track(URI)
         svc.stop()
-        svc.media_state_changed(_state(_vlc.State.Ended), URI)  # consumes the flag -> STOPPED
+        svc.track_stopped(None, None)  # consumes the flag -> STOPPED
         events.clear()
 
         svc.load_track(URI)
-        svc.media_state_changed(_state(_vlc.State.Ended), URI)  # natural end, no stop() this time
+        svc.track_ended(None, None)  # natural end, no stop() this time
         self.assertIn((PlaybackEvent.END_OF_MEDIA, {"uri": URI}), events)
         self.assertNotIn((PlaybackEvent.STOPPED, {"uri": URI}), events)
 
@@ -133,8 +133,8 @@ class TestV2EventReporting(unittest.TestCase):
         svc.get_track_position()
         svc.set_track_position(1000)
         svc.stop()
-        svc.media_state_changed(_state(_vlc.State.Ended), URI)
-        svc.media_state_changed(_state(_vlc.State.Error), URI)
+        svc.track_ended(None, None)
+        svc.track_error(None, None)
 
         self.assertEqual(seen, [], f"backend emitted state on the bus: {seen}")
 

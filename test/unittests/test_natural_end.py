@@ -39,7 +39,7 @@ class TestNaturalEndOfMedia(unittest.TestCase):
 
         # simulate the media reaching Ended on its own,
         # with no stop() ever called by us
-        service.media_state_changed(_state(_vlc.State.Ended), URI)
+        service.track_ended(None, None)
 
         self.assertIn((PlaybackEvent.END_OF_MEDIA, {"uri": URI}), events,
                        f"natural end-of-media never reported END_OF_MEDIA with uri; saw: {events}")
