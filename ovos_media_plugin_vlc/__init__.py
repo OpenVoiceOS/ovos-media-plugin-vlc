@@ -31,17 +31,9 @@ class VlcBaseService(MediaBackend):
 
         self.vlc_events.event_attach(vlc.EventType.MediaPlayerPlaying,
                                      self.track_start, 1)
-        # both a natural end (vlc reaches EOF on its own) and an explicit
-        # stop() (which libvlc reports asynchronously via
-        # MediaPlayerStopped, not synchronously from stop() itself) end up
-        # at the *same* end-of-track handler; report_track_end tells them
-        # apart via the _stop_requested flag the base class's stop() sets.
-        self.vlc_events.event_attach(vlc.EventType.MediaPlayerEndReached,
-                                     self.queue_ended, 0)
-        self.vlc_events.event_attach(vlc.EventType.MediaPlayerStopped,
-                                     self.queue_ended, 0)
-        self.vlc_events.event_attach(vlc.EventType.MediaPlayerEncounteredError,
-                                     self.handle_vlc_error, None)
+        # Ends are read per media (see load_track): the player-level end
+        # events do not say which media ended, and after a switch the
+        # current media is already the next one.
 
         self.config = config
         self.bus = bus
@@ -52,30 +44,24 @@ class VlcBaseService(MediaBackend):
             self.player.toggle_fullscreen()
 
     # vlc internals
-    def handle_vlc_error(self, data, other):
-        # an encountered error is also the end of the track - libvlc does
-        # not additionally fire MediaPlayerEndReached/MediaPlayerStopped
-        # for it, so this is the only end-of-track signal for a failed
-        # track and must go through report_track_end (not a bare
-        # report(ERROR, ...)) so the pending _stop_requested flag is
-        # cleared the same way every other end-of-track path clears it.
-        self.report_track_end(uri=self._loaded_uri,
-                              error="libvlc reported a playback error")
-
     def track_start(self, data, other):
         LOG.debug('VLC playback start')
         self.report(PlaybackEvent.TRACK_START, uri=self._loaded_uri)
 
-    def queue_ended(self, data, other):
-        """Single convergence point for every "playback is no longer
-        happening" signal libvlc can fire: a natural end
-        (MediaPlayerEndReached) and an explicit stop() (MediaPlayerStopped,
-        fired asynchronously by libvlc, not by our _stop()). Neither event
-        alone knows *why* playback stopped, so report_track_end decides
-        using the _stop_requested flag the base class's stop() sets.
+    def media_state_changed(self, event, uri):
+        """End-of-track handler, attached to each media with its own uri.
+
+        libvlc sets Ended on a natural end, Stopped on stop() or when the
+        media is replaced, and Error when playback fails. report_track_end
+        tells a stop from a natural end by the _stop_requested flag.
         """
-        LOG.debug('VLC playback ended')
-        self.report_track_end(uri=self._loaded_uri)
+        state = event.u.new_state
+        if state == vlc.State.Error:
+            self.report_track_end(uri=uri,
+                                  error="libvlc reported a playback error")
+        elif state in (vlc.State.Ended, vlc.State.Stopped):
+            LOG.debug('VLC playback ended')
+            self.report_track_end(uri=uri)
 
     def supported_uris(self):
         return ['file', 'http', 'https']
@@ -85,7 +71,8 @@ class VlcBaseService(MediaBackend):
         """ Load track using vlc. """
         LOG.debug('VLCService Load')
         track = self.instance.media_new(uri)
-        track.get_mrl()
+        track.event_manager().event_attach(vlc.EventType.MediaStateChanged,
+                                           self.media_state_changed, uri)
         self.player.set_media(track)
         self._loaded_uri = uri
         return True

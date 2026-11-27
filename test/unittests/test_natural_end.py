@@ -1,5 +1,5 @@
-"""Regression test: a track that ends naturally (vlc fires
-``MediaPlayerEndReached`` on its own, no stop() ever called) must report
+"""Regression test: a track that ends naturally (the media
+reaches the Ended state on its own, no stop() ever called) must report
 ``PlaybackEvent.END_OF_MEDIA`` to the daemon, exactly like an explicit stop's
 natural counterpart, and must carry the loaded ``uri`` for staleness checks.
 
@@ -8,14 +8,19 @@ natural counterpart, and must carry the loaded ``uri`` for staleness checks.
 """
 import sys
 import unittest
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
-_vlc = MagicMock()
-sys.modules.setdefault("vlc", _vlc)
+_vlc = sys.modules.setdefault("vlc", MagicMock())
 
 from ovos_plugin_manager.templates.media import PlaybackEvent
 
 from ovos_media_plugin_vlc import VLCOCPAudioService
+
+
+def _state(new_state):
+    return SimpleNamespace(u=SimpleNamespace(new_state=new_state))
+
 
 URI = "file:///tmp/track.wav"
 
@@ -32,9 +37,9 @@ class TestNaturalEndOfMedia(unittest.TestCase):
     def test_natural_track_end_reports_end_of_media_with_uri(self):
         service, events = self._service()
 
-        # simulate vlc's MediaPlayerEndReached event firing on its own,
+        # simulate the media reaching Ended on its own,
         # with no stop() ever called by us
-        service.queue_ended(None, None)
+        service.media_state_changed(_state(_vlc.State.Ended), URI)
 
         self.assertIn((PlaybackEvent.END_OF_MEDIA, {"uri": URI}), events,
                        f"natural end-of-media never reported END_OF_MEDIA with uri; saw: {events}")

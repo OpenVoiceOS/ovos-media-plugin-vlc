@@ -8,13 +8,12 @@ points are declared correctly.
 """
 import sys
 import unittest
+from types import SimpleNamespace
 from unittest.mock import MagicMock
 
 
 # --- mock libvlc so the plugin imports without a real VLC install -----------
-_vlc = MagicMock()
-# vlc.EventType.* must be attribute-accessible; MagicMock handles that.
-sys.modules.setdefault("vlc", _vlc)
+_vlc = sys.modules.setdefault("vlc", MagicMock())
 
 from ovos_plugin_manager.templates.media import (
     AudioPlayerBackend, VideoPlayerBackend, PlaybackEvent)
@@ -24,6 +23,11 @@ from ovos_utils.fakebus import FakeBus
 from ovos_media_plugin_vlc import (
     VlcBaseService, VLCOCPAudioService, VLCOCPVideoService)
 from ovos_media_plugin_vlc.audio import VLCAudioService, load_service
+
+
+def _state(new_state):
+    return SimpleNamespace(u=SimpleNamespace(new_state=new_state))
+
 
 URI = "http://example.com/song.mp3"
 
@@ -73,7 +77,7 @@ class TestV2EventReporting(unittest.TestCase):
     def test_vlc_error_reports_error_and_uri(self):
         svc, events = self._service()
         svc.load_track(URI)
-        svc.handle_vlc_error(None, None)
+        svc.media_state_changed(_state(_vlc.State.Error), URI)
         self.assertEqual(len(events), 1)
         event, data = events[0]
         self.assertEqual(event, PlaybackEvent.ERROR)
@@ -82,17 +86,14 @@ class TestV2EventReporting(unittest.TestCase):
         self.assertTrue(data["error"])
 
     def test_explicit_stop_then_vlc_stopped_event_reports_stopped(self):
-        """stop() records the explicit-stop request; the *real* vlc
-        end-of-track signal (queue_ended, wired to both
-        MediaPlayerEndReached and MediaPlayerStopped) is what actually
-        reports it - matching how libvlc fires MediaPlayerStopped
-        asynchronously rather than synchronously from stop() itself."""
+        """stop() records the request; the asynchronous Stopped state of
+        the media reports it."""
         svc, events = self._service()
         svc.load_track(URI)
         svc.stop()
         self.assertEqual(events, [], "stop() itself must not report - only "
                                       "the vlc end-of-track callback does")
-        svc.queue_ended(None, None)
+        svc.media_state_changed(_state(_vlc.State.Stopped), URI)
         self.assertIn((PlaybackEvent.STOPPED, {"uri": URI}), events)
 
     def test_natural_end_after_stop_flag_is_not_sticky(self):
@@ -102,11 +103,11 @@ class TestV2EventReporting(unittest.TestCase):
         svc, events = self._service()
         svc.load_track(URI)
         svc.stop()
-        svc.queue_ended(None, None)  # consumes the flag -> STOPPED
+        svc.media_state_changed(_state(_vlc.State.Ended), URI)  # consumes the flag -> STOPPED
         events.clear()
 
         svc.load_track(URI)
-        svc.queue_ended(None, None)  # natural end, no stop() this time
+        svc.media_state_changed(_state(_vlc.State.Ended), URI)  # natural end, no stop() this time
         self.assertIn((PlaybackEvent.END_OF_MEDIA, {"uri": URI}), events)
         self.assertNotIn((PlaybackEvent.STOPPED, {"uri": URI}), events)
 
@@ -132,8 +133,8 @@ class TestV2EventReporting(unittest.TestCase):
         svc.get_track_position()
         svc.set_track_position(1000)
         svc.stop()
-        svc.queue_ended(None, None)
-        svc.handle_vlc_error(None, None)
+        svc.media_state_changed(_state(_vlc.State.Ended), URI)
+        svc.media_state_changed(_state(_vlc.State.Error), URI)
 
         self.assertEqual(seen, [], f"backend emitted state on the bus: {seen}")
 
