@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.2a1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.2.2a1) (2026-11-27)
+
+[Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.2.1a1...0.2.2a1)
+
+**Merged pull requests:**
+
+- fix: get\_track\_length/get\_track\_position answer None when stopped [\#7](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/pull/7) ([openvoiceos-bot](https://github.com/openvoiceos-bot))
+
 ## [0.2.1a1](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/tree/0.2.1a1) (2026-09-02)
 
 [Full Changelog](https://github.com/OpenVoiceOS/ovos-media-plugin-vlc/compare/0.2.0a2...0.2.1a1)
