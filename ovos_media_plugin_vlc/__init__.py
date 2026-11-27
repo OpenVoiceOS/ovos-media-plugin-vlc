@@ -122,16 +122,43 @@ class VlcBaseService(MediaBackend):
             ret['title'] = t.get_meta(vlc.Meta.Title)
         return ret
 
+    def _has_media_loaded(self):
+        """True once a track is loaded, through playing, paused or buffering.
+
+        ``is_playing()`` is false while paused, but a paused track still has
+        a real position and length, so the guard has to test for loaded
+        media, not for active playback. ``get_state()`` answers
+        ``NothingSpecial`` before anything is loaded and ``Stopped``,
+        ``Ended`` or ``Error`` once playback ends; every other state keeps a
+        track loaded.
+        """
+        return self.player.get_state() not in (
+            vlc.State.NothingSpecial, vlc.State.Stopped,
+            vlc.State.Ended, vlc.State.Error)
+
     def get_track_length(self):
         """
         getting the duration of the audio in milliseconds
+
+        ``None`` means nothing is loaded. libVLC answers 0, not -1, for a
+        live stream's unknown duration; this reports the MediaBackend
+        contract's -1 for that case instead of the raw 0.
         """
-        return self.player.get_length()
+        if not self._has_media_loaded():
+            return None
+        length = self.player.get_length()
+        return length if length > 0 else -1
 
     def get_track_position(self):
         """
         get current position in milliseconds
+
+        ``None`` means nothing is loaded. A paused track and a live stream
+        both have a real elapsed position, so it is returned like any other
+        track's.
         """
+        if not self._has_media_loaded():
+            return None
         return self.player.get_time()
 
     def set_track_position(self, milliseconds):
